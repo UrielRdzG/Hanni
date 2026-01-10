@@ -1,0 +1,660 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Te amo ♥ </title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            background: linear-gradient(to bottom, #0a0e27 0%, #1a1f3a 50%, #0f1428 100%);
+            overflow: hidden;
+            font-family: 'Georgia', serif;
+            height: 100vh;
+        }
+
+        canvas {
+            position: fixed;
+            top: 0;
+            left: 0;
+            z-index: 1;
+        }
+
+        .days-counter {
+            position: fixed;
+            top: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            font-size: 18px;
+            color: #fff;
+            text-shadow: 0 0 10px rgba(255, 255, 255, 0.8), 0 0 20px rgba(135, 206, 250, 0.6);
+            z-index: 10;
+            font-weight: 300;
+            letter-spacing: 2px;
+            text-align: center;
+            padding: 0 10px;
+        }
+
+        .days-number {
+            font-size: 28px;
+            font-weight: bold;
+            color: #87CEEB;
+            display: block;
+            margin-top: 5px;
+        }
+
+        @media (min-width: 768px) {
+            .days-counter {
+                top: 30px;
+                font-size: 22px;
+            }
+            .days-number {
+                font-size: 32px;
+            }
+        }
+
+        .love-phrase {
+            position: fixed;
+            bottom: 100px;
+            left: 50%;
+            transform: translateX(-50%);
+            text-align: center;
+            z-index: 10;
+            max-width: 90%;
+            display: none;
+            opacity: 0;
+            transition: opacity 0.5s ease-in-out;
+            padding: 0 15px;
+        }
+
+        .love-phrase.show {
+            display: block;
+            opacity: 1;
+        }
+
+        .love-phrase p {
+            font-size: 16px;
+            color: rgba(255, 255, 255, 0.9);
+            text-shadow: 
+                0 0 10px rgba(255, 255, 255, 0.8),
+                0 0 20px rgba(135, 206, 250, 0.6),
+                0 0 30px rgba(135, 206, 250, 0.4);
+            line-height: 1.6;
+            font-style: italic;
+            animation: textGlow 3s ease-in-out infinite;
+            letter-spacing: 0.5px;
+        }
+
+        @media (min-width: 768px) {
+            .love-phrase {
+                bottom: 80px;
+            }
+            .love-phrase p {
+                font-size: 20px;
+                line-height: 1.8;
+                letter-spacing: 1px;
+            }
+        }
+
+        .heart-emoji {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            font-size: 90px;
+            color: white;
+            z-index: 5;
+            text-shadow: 
+                0 0 20px rgba(255, 255, 255, 0.9),
+                0 0 40px rgba(255, 255, 255, 0.7),
+                0 0 60px rgba(135, 206, 250, 0.5),
+                0 0 80px rgba(135, 206, 250, 0.3);
+            animation: heartGlow 2.5s ease-in-out infinite;
+            cursor: pointer;
+            user-select: none;
+        }
+
+        .heart-emoji:hover {
+            transform: translate(-50%, -50%) scale(1.1);
+        }
+
+        @media (min-width: 768px) {
+            .heart-emoji {
+                font-size: 120px;
+            }
+        }
+
+        @keyframes heartGlow {
+            0%, 100% {
+                text-shadow: 
+                    0 0 20px rgba(255, 255, 255, 0.9),
+                    0 0 40px rgba(255, 255, 255, 0.7),
+                    0 0 60px rgba(135, 206, 250, 0.5),
+                    0 0 80px rgba(135, 206, 250, 0.3);
+                opacity: 0.95;
+                transform: translate(-50%, -50%) scale(1);
+            }
+            50% {
+                text-shadow: 
+                    0 0 30px rgba(255, 255, 255, 1),
+                    0 0 50px rgba(255, 255, 255, 0.9),
+                    0 0 70px rgba(135, 206, 250, 0.7),
+                    0 0 100px rgba(135, 206, 250, 0.5);
+                opacity: 1;
+                transform: translate(-50%, -50%) scale(1.05);
+            }
+        }
+
+        @keyframes textGlow {
+            0%, 100% {
+                text-shadow: 
+                    0 0 10px rgba(255, 255, 255, 0.8),
+                    0 0 20px rgba(135, 206, 250, 0.6),
+                    0 0 30px rgba(135, 206, 250, 0.4);
+                opacity: 0.9;
+            }
+            50% {
+                text-shadow: 
+                    0 0 20px rgba(255, 255, 255, 1),
+                    0 0 30px rgba(135, 206, 250, 0.8),
+                    0 0 40px rgba(135, 206, 250, 0.6);
+                opacity: 1;
+            }
+        }
+
+        .photo-modal {
+            display: none;
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: rgba(15, 20, 40, 0.95);
+            border: 2px solid rgba(255, 255, 255, 0.3);
+            border-radius: 20px;
+            padding: 20px;
+            max-width: 90%;
+            width: 400px;
+            z-index: 100;
+            box-shadow: 0 0 50px rgba(135, 206, 250, 0.4);
+        }
+
+        @media (min-width: 768px) {
+            .photo-modal {
+                padding: 30px;
+                max-width: 500px;
+            }
+        }
+
+        .photo-modal.active {
+            display: block;
+            animation: modalAppear 0.4s ease-out;
+        }
+
+        @keyframes modalAppear {
+            from {
+                opacity: 0;
+                transform: translate(-50%, -50%) scale(0.8);
+            }
+            to {
+                opacity: 1;
+                transform: translate(-50%, -50%) scale(1);
+            }
+        }
+
+        .photo-container {
+            width: 100%;
+            height: 250px;
+            background: #1a1f3a;
+            border-radius: 10px;
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
+        }
+
+        @media (min-width: 768px) {
+            .photo-container {
+                height: 300px;
+            }
+        }
+
+        .photo-container img {
+            max-width: 100%;
+            max-height: 100%;
+            object-fit: contain;
+        }
+
+        .photo-text {
+            color: white;
+            font-size: 16px;
+            line-height: 1.6;
+            text-shadow: 0 0 10px rgba(255, 255, 255, 0.5);
+        }
+
+        @media (min-width: 768px) {
+            .photo-text {
+                font-size: 18px;
+            }
+        }
+
+        .close-btn {
+            position: absolute;
+            top: 10px;
+            right: 15px;
+            font-size: 30px;
+            color: white;
+            cursor: pointer;
+            background: none;
+            border: none;
+            text-shadow: 0 0 10px rgba(255, 255, 255, 0.8);
+        }
+
+        .close-btn:hover {
+            color: #87CEEB;
+        }
+
+        .instructions {
+            position: fixed;
+            bottom: 15px;
+            left: 50%;
+            transform: translateX(-50%);
+            color: rgba(255, 255, 255, 0.5);
+            font-size: 11px;
+            text-shadow: 0 0 5px rgba(255, 255, 255, 0.3);
+            z-index: 10;
+            text-align: center;
+            padding: 0 15px;
+            line-height: 1.4;
+        }
+
+        @media (min-width: 768px) {
+            .instructions {
+                bottom: 20px;
+                font-size: 13px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <canvas id="stars"></canvas>
+    
+    <div class="days-counter">
+        Días juntos
+        <span class="days-number" id="daysCount">0</span>
+    </div>
+
+    <div class="heart-emoji" id="heartEmoji">♡</div>
+
+    <div class="love-phrase" id="lovePhrase">
+        <p>Te amo más de lo que puedo explicar.<br>
+        Eres mi universo, y quiero quedarme a tu lado hasta que expire.</p>
+    </div>
+
+    <div class="photo-modal" id="photoModal">
+        <button class="close-btn" onclick="closeModal()">&times;</button>
+        <div class="photo-container" id="photoContainer">
+            <img id="photoImage" src="" alt="Recuerdo especial">
+        </div>
+        <p class="photo-text" id="photoText"></p>
+    </div>
+
+    <!--div class="instructions">
+        Haz clic en el corazón para ver un mensaje especial ♡<br>
+        Haz clic en las estrellas brillantes para ver nuestros recuerdos ✨
+    </div-->
+
+    <script>
+        // ==========================================
+        // CONFIGURACIÓN DE FOTOS Y TEXTOS
+        // ==========================================
+        const memories = [
+            {
+                photo: "https://raw.githubusercontent.com/UrielRdzG/Hanni/main/foto1.jpg", 
+                text: "Prueba 1"
+            },
+            {
+                photo: "https://raw.githubusercontent.com/UrielRdzG/Hanni/main/foto2.jpg",
+                text: "Escribe aquí el texto del recuerdo 2"
+            },
+            {
+                photo: "https://raw.githubusercontent.com/UrielRdzG/Hanni/main/foto3.jpg",
+                text: "Escribe aquí el texto del recuerdo 3"
+            },
+            {
+                photo: "https://raw.githubusercontent.com/UrielRdzG/Hanni/main/foto4.jpg",
+                text: "Escribe aquí el texto del recuerdo 4"
+            },
+            {
+                photo: "https://raw.githubusercontent.com/UrielRdzG/Hanni/main/foto3.jpg",
+                text: "Escribe aquí el texto del recuerdo 5"
+            }
+        ];
+        // ==========================================
+
+        const canvas = document.getElementById('stars');
+        const ctx = canvas.getContext('2d');
+        
+        canvas.width = window.innerWidth;
+        canvas.height = window.innerHeight;
+
+        const stars = [];
+        const interactiveStars = [];
+        const constellations = {
+            u: [],
+            h: []
+        };
+
+        // Función para calcular días juntos
+        function calculateDays() {
+            const startDate = new Date(2025, 10, 17); // 17 de Noviembre 2025 (mes 10 = Noviembre)
+            const today = new Date();
+            const diffTime = Math.abs(today - startDate);
+            const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+            document.getElementById('daysCount').textContent = diffDays;
+        }
+
+        calculateDays();
+        setInterval(calculateDays, 3600000);
+
+        class Star {
+            constructor(x, y, radius, isSpecial = false, memoryIndex = -1) {
+                this.x = x;
+                this.y = y;
+                this.radius = radius;
+                this.baseRadius = radius;
+                this.isSpecial = isSpecial;
+                this.memoryIndex = memoryIndex;
+                this.opacity = Math.random() * 0.5 + 0.5;
+                this.twinkleSpeed = Math.random() * 0.02 + 0.01;
+                this.pulseDirection = 1;
+            }
+
+            draw() {
+                ctx.save();
+                
+                if (this.isSpecial) {
+                    const gradient = ctx.createRadialGradient(this.x, this.y, 0, this.x, this.y, this.radius * 4);
+                    gradient.addColorStop(0, `rgba(135, 206, 250, ${this.opacity})`);
+                    gradient.addColorStop(0.5, `rgba(135, 206, 250, ${this.opacity * 0.3})`);
+                    gradient.addColorStop(1, 'rgba(135, 206, 250, 0)');
+                    ctx.fillStyle = gradient;
+                    ctx.fillRect(this.x - this.radius * 4, this.y - this.radius * 4, this.radius * 8, this.radius * 8);
+                }
+
+                ctx.beginPath();
+                ctx.arc(this.x, this.y, this.radius, 0, Math.PI * 2);
+                ctx.fillStyle = `rgba(255, 255, 255, ${this.opacity})`;
+                ctx.fill();
+
+                ctx.shadowBlur = this.isSpecial ? 20 : 10;
+                ctx.shadowColor = this.isSpecial ? '#87CEEB' : 'white';
+                ctx.fill();
+
+                ctx.restore();
+            }
+
+            update() {
+                this.opacity += this.twinkleSpeed * this.pulseDirection;
+                if (this.opacity >= 1 || this.opacity <= 0.5) {
+                    this.pulseDirection *= -1;
+                }
+
+                if (this.isSpecial) {
+                    this.radius = this.baseRadius + Math.sin(Date.now() * 0.003) * 0.5;
+                }
+            }
+        }
+
+        // Función para dibujar líneas de constelación
+        function drawConstellationLines(starsArray, color = 'rgba(255, 255, 255, 0.3)') {
+            if (starsArray.length < 2) return;
+
+            ctx.save();
+            ctx.strokeStyle = color;
+            ctx.lineWidth = 1.5;
+            ctx.shadowBlur = 8;
+            ctx.shadowColor = color;
+
+            ctx.beginPath();
+            ctx.moveTo(starsArray[0].x, starsArray[0].y);
+            
+            for (let i = 1; i < starsArray.length; i++) {
+                ctx.lineTo(starsArray[i].x, starsArray[i].y);
+            }
+            
+            ctx.stroke();
+            ctx.restore();
+        }
+
+        // Crear estrellas de fondo
+        for (let i = 0; i < 200; i++) {
+            const x = Math.random() * canvas.width;
+            const y = Math.random() * canvas.height;
+            const radius = Math.random() * 1.5 + 0.5;
+            stars.push(new Star(x, y, radius));
+        }
+
+        // Función para crear letra en forma de constelación
+        function createLetterConstellation(letter, centerX, centerY, size, group) {
+            const letterStars = [];
+            const patterns = {
+                'U': [
+                    {x: -1, y: -1.8}, {x: -1, y: -1.2}, {x: -1, y: -0.6}, {x: -1, y: 0}, {x: -1, y: 0.6}, {x: -1, y: 1.2},
+                    {x: -0.6, y: 1.6}, {x: -0.2, y: 1.8}, {x: 0.2, y: 1.8}, {x: 0.6, y: 1.6},
+                    {x: 1, y: 1.2}, {x: 1, y: 0.6}, {x: 1, y: 0}, {x: 1, y: -0.6}, {x: 1, y: -1.2}, {x: 1, y: -1.8}
+                ],
+                'H': [
+                    // Línea izquierda (más estrellas)
+                    {x: -1, y: -1.8}, {x: -1, y: -1.5}, {x: -1, y: -1.2}, {x: -1, y: -0.9}, 
+                    {x: -1, y: -0.6}, {x: -1, y: -0.3}, {x: -1, y: 0}, {x: -1, y: 0.3},
+                    {x: -1, y: 0.6}, {x: -1, y: 0.9}, {x: -1, y: 1.2}, {x: -1, y: 1.5}, {x: -1, y: 1.8},
+                    // Línea horizontal central (más estrellas)
+                    {x: -0.8, y: 0}, {x: -0.6, y: 0}, {x: -0.4, y: 0}, {x: -0.2, y: 0}, 
+                    {x: 0, y: 0}, {x: 0.2, y: 0}, {x: 0.4, y: 0}, {x: 0.6, y: 0}, {x: 0.8, y: 0},
+                    // Línea derecha (más estrellas)
+                    {x: 1, y: -1.8}, {x: 1, y: -1.5}, {x: 1, y: -1.2}, {x: 1, y: -0.9}, 
+                    {x: 1, y: -0.6}, {x: 1, y: -0.3}, {x: 1, y: 0}, {x: 1, y: 0.3},
+                    {x: 1, y: 0.6}, {x: 1, y: 0.9}, {x: 1, y: 1.2}, {x: 1, y: 1.5}, {x: 1, y: 1.8}
+                ],
+                'heart': [
+                    // Curva superior izquierda (lóbulo izquierdo)
+                    {x: -0.8, y: -1.0}, {x: -1.0, y: -0.8}, {x: -1.1, y: -0.5}, 
+                    {x: -1.1, y: -0.2}, {x: -1.0, y: 0.1}, {x: -0.8, y: 0.3},
+                    // Top izquierdo del corazón
+                    {x: -0.6, y: -1.2}, {x: -0.4, y: -1.3}, {x: -0.2, y: -1.3},
+                    // Centro top
+                    {x: 0, y: -1.2},
+                    // Top derecho del corazón
+                    {x: 0.2, y: -1.3}, {x: 0.4, y: -1.3}, {x: 0.6, y: -1.2},
+                    // Curva superior derecha (lóbulo derecho)
+                    {x: 0.8, y: -1.0}, {x: 1.0, y: -0.8}, {x: 1.1, y: -0.5},
+                    {x: 1.1, y: -0.2}, {x: 1.0, y: 0.1}, {x: 0.8, y: 0.3},
+                    // Diagonal izquierda hacia abajo
+                    {x: -0.7, y: 0.5}, {x: -0.6, y: 0.7}, {x: -0.5, y: 0.9},
+                    {x: -0.4, y: 1.1}, {x: -0.3, y: 1.3}, {x: -0.2, y: 1.5}, {x: -0.1, y: 1.7},
+                    // Diagonal derecha hacia abajo
+                    {x: 0.7, y: 0.5}, {x: 0.6, y: 0.7}, {x: 0.5, y: 0.9},
+                    {x: 0.4, y: 1.1}, {x: 0.3, y: 1.3}, {x: 0.2, y: 1.5}, {x: 0.1, y: 1.7},
+                    // Punta final
+                    {x: 0, y: 1.9}
+                ]
+            };
+
+            const pattern = patterns[letter] || [];
+            pattern.forEach(point => {
+                const x = centerX + point.x * size;
+                const y = centerY + point.y * size;
+                const star = new Star(x, y, 2.8);
+                letterStars.push(star);
+                if (group) constellations[group].push(star);
+            });
+
+            return letterStars;
+        }
+
+        // Función para crear texto con estrellas
+        function createTextConstellation(text, startX, startY, spacing = 18, group = null) {
+            const textStars = [];
+            ctx.font = 'bold 40px Arial';
+            
+            const metrics = ctx.measureText(text);
+            const textWidth = metrics.width;
+            const offsetX = startX - textWidth / 2;
+
+            for (let i = 0; i < text.length; i++) {
+                const char = text[i];
+                if (char === ' ') continue;
+
+                const charWidth = ctx.measureText(char).width;
+                const charX = offsetX + ctx.measureText(text.substring(0, i)).width + charWidth / 2;
+
+                const starsPerChar = [];
+                for (let j = 0; j < 10; j++) {
+                    const angle = (j / 10) * Math.PI * 2;
+                    const distance = 15 + Math.random() * 6;
+                    const x = charX + Math.cos(angle) * distance;
+                    const y = startY + Math.sin(angle) * distance;
+                    const star = new Star(x, y, 1.8 + Math.random() * 0.4);
+                    starsPerChar.push(star);
+                    textStars.push(star);
+                }
+
+                if (group) {
+                    constellations[group].push(...starsPerChar);
+                }
+            }
+            return textStars;
+        }
+
+        const centerX = canvas.width / 2;
+        const centerY = canvas.height / 2;
+
+        // Ajustar separación según el ancho de pantalla
+        const isMobile = canvas.width < 768;
+        const separation = isMobile ? 80 : 150;
+        const letterSize = isMobile ? 30 : 40;
+
+        // Crear U y H a los lados del corazón
+        const uStars = createLetterConstellation('U', centerX - separation, centerY, letterSize, 'u');
+        const hStars = createLetterConstellation('H', centerX + separation, centerY, letterSize, 'h');
+
+        stars.push(...uStars, ...hStars);
+
+        // Crear 5 estrellas especiales para las fotos con posiciones adaptativas
+        const positions = isMobile ? [
+            {x: canvas.width * 0.2, y: canvas.height * 0.2},
+            {x: canvas.width * 0.8, y: canvas.height * 0.2},
+            {x: canvas.width * 0.2, y: canvas.height * 0.8},
+            {x: canvas.width * 0.8, y: canvas.height * 0.8},
+            {x: canvas.width * 0.5, y: canvas.height * 0.15}
+        ] : [
+            {x: canvas.width * 0.15, y: canvas.height * 0.25},
+            {x: canvas.width * 0.85, y: canvas.height * 0.25},
+            {x: canvas.width * 0.15, y: canvas.height * 0.75},
+            {x: canvas.width * 0.85, y: canvas.height * 0.75},
+            {x: canvas.width * 0.5, y: canvas.height * 0.2}
+        ];
+
+        positions.forEach((pos, index) => {
+            const specialStar = new Star(pos.x, pos.y, 5, true, index);
+            interactiveStars.push(specialStar);
+            stars.push(specialStar);
+        });
+
+        // Manejo de clic en el corazón
+        const heartEmoji = document.getElementById('heartEmoji');
+        const lovePhrase = document.getElementById('lovePhrase');
+        let phraseVisible = false;
+
+        heartEmoji.addEventListener('click', () => {
+            phraseVisible = !phraseVisible;
+            if (phraseVisible) {
+                lovePhrase.classList.add('show');
+            } else {
+                lovePhrase.classList.remove('show');
+            }
+        });
+
+        // Manejo de clics
+        canvas.addEventListener('click', (e) => {
+            const rect = canvas.getBoundingClientRect();
+            const x = e.clientX - rect.left;
+            const y = e.clientY - rect.top;
+
+            interactiveStars.forEach(star => {
+                const distance = Math.sqrt((x - star.x) ** 2 + (y - star.y) ** 2);
+                if (distance < 25 && star.memoryIndex >= 0) {
+                    showMemory(star.memoryIndex);
+                }
+            });
+        });
+
+        // Efecto hover
+        canvas.addEventListener('mousemove', (e) => {
+            const rect = canvas.getBoundingClientRect();
+            const x = e.clientX - rect.left;
+            const y = e.clientY - rect.top;
+
+            let hovering = false;
+            interactiveStars.forEach(star => {
+                const distance = Math.sqrt((x - star.x) ** 2 + (y - star.y) ** 2);
+                if (distance < 25) {
+                    canvas.style.cursor = 'pointer';
+                    hovering = true;
+                }
+            });
+
+            if (!hovering) {
+                canvas.style.cursor = 'default';
+            }
+        });
+
+        function showMemory(index) {
+            const memory = memories[index];
+            document.getElementById('photoImage').src = memory.photo;
+            document.getElementById('photoText').textContent = memory.text;
+            document.getElementById('photoModal').classList.add('active');
+        }
+
+        function closeModal() {
+            document.getElementById('photoModal').classList.remove('active');
+        }
+
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'Escape') {
+                closeModal();
+            }
+        });
+
+        // Animación
+        function animate() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            
+            // Dibujar líneas de constelaciones
+            drawConstellationLines(constellations.u, 'rgba(135, 206, 250, 0.5)');
+            drawConstellationLines(constellations.h, 'rgba(135, 206, 250, 0.5)');
+            
+            // Dibujar estrellas
+            stars.forEach(star => {
+                star.update();
+                star.draw();
+            });
+
+            requestAnimationFrame(animate);
+        }
+
+        animate();
+
+        // Responsive
+        window.addEventListener('resize', () => {
+            location.reload(); // Recargar para recalcular posiciones
+        });
+    </script>
+</body>
+</html>
