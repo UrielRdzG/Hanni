@@ -352,10 +352,19 @@
 
         // Función para calcular días juntos
         function calculateDays() {
-            const startDate = new Date(2025, 10, 17); // 17 de Noviembre 2025 (mes 10 = Noviembre)
+             // Fecha de inicio (SIN hora)
+            const startDate = new Date("2025-11-17");
+
+            // Fecha de hoy (SIN hora)
             const today = new Date();
-            const diffTime = Math.abs(today - startDate);
-            const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+            today.setHours(0, 0, 0, 0);
+
+            // Diferencia en milisegundos
+            const diffTime = today.getTime() - startDate.getTime();
+
+            // Convertir a días exactos
+            const diffDays = Math.floor(diffTime / (1000 * 60 * 60 * 24));
+
             document.getElementById('daysCount').textContent = diffDays;
         }
 
