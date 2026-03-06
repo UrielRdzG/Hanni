@@ -4,7 +4,29 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Para el amor de mi vida ♥</title>
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>♥</text></svg>">
     <style>
+        /* ===== TEMA DE COLOR ===== */
+        :root {
+            --accent: #87CEEB;
+            --accent-rgb: 135, 206, 250;
+            --bg-start: #0a0e27;
+            --bg-mid: #1a1f3a;
+            --bg-end: #0f1428;
+            --star-color: white;
+            --bg-gradient: linear-gradient(to bottom, #0a0e27 0%, #1a1f3a 50%, #0f1428 100%);
+        }
+
+        body.theme-rosa {
+            --accent: #f4a7c3;
+            --accent-rgb: 244, 167, 195;
+            --bg-start: #1a0a14;
+            --bg-mid: #2a0f1e;
+            --bg-end: #120810;
+            --star-color: #ffe0f0;
+            --bg-gradient: linear-gradient(to bottom, #1a0a14 0%, #2a0f1e 50%, #120810 100%);
+        }
+
         * {
             margin: 0;
             padding: 0;
@@ -12,10 +34,144 @@
         }
 
         body {
-            background: linear-gradient(to bottom, #0a0e27 0%, #1a1f3a 50%, #0f1428 100%);
-            overflow: hidden;
+            background: var(--bg-gradient);
+            overflow-x: hidden;
+            overflow-y: auto;
             font-family: 'Georgia', serif;
-            height: 100vh;
+            min-height: 100vh;
+        }
+
+        /* ===== SECCIÓN GALERÍA ===== */
+        .gallery-section {
+            position: relative;
+            z-index: 5;
+            margin-top: 100vh;
+            padding: 60px 20px 80px;
+            background: linear-gradient(to bottom, transparent, #07091a 120px);
+            opacity: 0;
+            transform: translateY(40px);
+            transition: opacity 0.9s ease, transform 0.9s ease;
+        }
+
+        .gallery-section.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        .gallery-title {
+            text-align: center;
+            color: rgba(255,255,255,0.85);
+            font-size: 22px;
+            font-weight: 300;
+            letter-spacing: 4px;
+            text-transform: uppercase;
+            margin-bottom: 10px;
+            text-shadow: 0 0 20px rgba(var(--accent-rgb),0.7);
+        }
+
+        .gallery-subtitle {
+            text-align: center;
+            color: rgba(var(--accent-rgb),0.6);
+            font-size: 13px;
+            letter-spacing: 2px;
+            margin-bottom: 60px;
+        }
+
+        .polaroids-grid {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 30px 20px;
+            max-width: 1100px;
+            margin: 0 auto;
+        }
+
+        .polaroid {
+            background: #f5f0e8;
+            padding: 12px 12px 40px;
+            width: 160px;
+            box-shadow:
+                0 6px 20px rgba(0,0,0,0.6),
+                0 0 0 1px rgba(255,255,255,0.05);
+            cursor: pointer;
+            transform: rotate(var(--rot, 0deg)) translateY(30px);
+            opacity: 0;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            animation: polaroidDrop 0.7s ease forwards;
+            animation-delay: var(--delay, 0s);
+        }
+
+        .polaroid:hover {
+            transform: rotate(0deg) translateY(-8px) scale(1.06) !important;
+            box-shadow: 0 20px 50px rgba(0,0,0,0.8), 0 0 30px rgba(var(--accent-rgb),0.3);
+            z-index: 10;
+        }
+
+        @keyframes polaroidDrop {
+            0%   { opacity: 0; transform: rotate(var(--rot)) translateY(50px) scale(0.9); }
+            60%  { opacity: 1; transform: rotate(var(--rot)) translateY(-8px) scale(1.02); }
+            100% { opacity: 1; transform: rotate(var(--rot)) translateY(0px) scale(1); }
+        }
+
+        .polaroid img {
+            width: 100%;
+            height: 140px;
+            object-fit: cover;
+            display: block;
+            background: #ccc;
+        }
+
+        .polaroid .polaroid-caption {
+            margin-top: 8px;
+            text-align: center;
+            font-size: 11px;
+            color: #555;
+            font-family: 'Georgia', serif;
+            font-style: italic;
+            line-height: 1.3;
+            min-height: 16px;
+        }
+
+        /* Scroll hint */
+        .scroll-hint {
+            position: fixed;
+            bottom: 18px;
+            left: 50%;
+            transform: translateX(-50%);
+            z-index: 10;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 4px;
+            animation: hintBounce 2s ease-in-out infinite;
+            pointer-events: none;
+        }
+
+        .scroll-hint span {
+            color: rgba(255,255,255,0.45);
+            font-size: 11px;
+            letter-spacing: 2px;
+        }
+
+        .scroll-hint .arrow {
+            width: 16px;
+            height: 16px;
+            border-right: 1.5px solid rgba(255,255,255,0.4);
+            border-bottom: 1.5px solid rgba(255,255,255,0.4);
+            transform: rotate(45deg);
+        }
+
+        @keyframes hintBounce {
+            0%, 100% { opacity: 0.5; transform: translateX(-50%) translateY(0); }
+            50%       { opacity: 1;   transform: translateX(-50%) translateY(6px); }
+        }
+
+        .scroll-hint.hidden { display: none; }
+
+        @media (min-width: 768px) {
+            .polaroid { width: 190px; }
+            .polaroid img { height: 165px; }
+            .gallery-title { font-size: 26px; }
         }
 
         canvas {
@@ -32,7 +188,7 @@
             transform: translateX(-50%);
             font-size: 18px;
             color: #fff;
-            text-shadow: 0 0 10px rgba(255, 255, 255, 0.8), 0 0 20px rgba(135, 206, 250, 0.6);
+            text-shadow: 0 0 10px rgba(255, 255, 255, 0.8), 0 0 20px rgba(var(--accent-rgb),0.6);
             z-index: 10;
             font-weight: 300;
             letter-spacing: 2px;
@@ -40,10 +196,114 @@
             padding: 0 10px;
         }
 
+        /* ===== CORAZONES FLOTANTES ===== */
+        .heart-particle {
+            position: fixed;
+            pointer-events: none;
+            z-index: 2;
+            font-size: var(--size, 14px);
+            opacity: 0;
+            animation: heartFloat var(--fdur, 8s) ease-in forwards;
+            user-select: none;
+        }
+
+        @keyframes heartFloat {
+            0%   { opacity: 0;    transform: translateY(0)   rotate(0deg)   scale(0.8); }
+            10%  { opacity: var(--fop, 0.18); }
+            80%  { opacity: var(--fop, 0.18); }
+            100% { opacity: 0;    transform: translateY(-110vh) rotate(var(--frot, 30deg)) scale(1.1); }
+        }
+
+        /* ===== NAVEGACIÓN DEL LIGHTBOX ===== */
+        .modal-nav {
+            position: absolute;
+            top: 0;
+            bottom: 0;
+            width: 44px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            z-index: 102;
+            background: transparent;
+            border: none;
+            padding: 0;
+            transition: background 0.2s;
+        }
+
+        .modal-nav:hover { background: rgba(0,0,0,0.15); }
+
+        .modal-nav.prev { left: -48px; border-radius: 6px 0 0 6px; }
+        .modal-nav.next { right: -48px; border-radius: 0 6px 6px 0; }
+
+        .modal-nav svg {
+            width: 22px;
+            height: 22px;
+            stroke: rgba(255,255,255,0.75);
+            fill: none;
+            stroke-width: 2.5;
+            stroke-linecap: round;
+            stroke-linejoin: round;
+            filter: drop-shadow(0 0 4px rgba(0,0,0,0.6));
+            transition: stroke 0.2s;
+        }
+
+        .modal-nav:hover svg { stroke: #fff; }
+
+        /* Indicador de posición */
+        .modal-dots {
+            display: flex;
+            justify-content: center;
+            gap: 6px;
+            padding: 8px 0 4px;
+        }
+
+        .modal-dot {
+            width: 6px;
+            height: 6px;
+            border-radius: 50%;
+            background: #bbb;
+            transition: background 0.25s, transform 0.25s;
+        }
+
+        .modal-dot.active {
+            background: #888;
+            transform: scale(1.3);
+        }
+            0%   { opacity: 1; }
+            20%  { opacity: 0.85; }
+            100% { opacity: 0; }
+        }
+
+        /* Partícula de explosión */
+        .burst-particle {
+            position: fixed;
+            border-radius: 50%;
+            pointer-events: none;
+            z-index: 20;
+            animation: burstFly var(--dur, 0.8s) ease-out forwards;
+        }
+
+        @keyframes burstFly {
+            0%   { transform: translate(0, 0) scale(1); opacity: 1; }
+            100% { transform: translate(var(--tx), var(--ty)) scale(0); opacity: 0; }
+        }
+
+        /* Flash de destello sobre el número */
+        .days-number.flash {
+            animation: numberFlash 0.5s ease-out;
+        }
+
+        @keyframes numberFlash {
+            0%   { color: var(--accent); text-shadow: none; transform: scale(1); }
+            30%  { color: #fff; text-shadow: 0 0 30px #fff, 0 0 60px var(--accent), 0 0 90px var(--accent); transform: scale(1.35); }
+            100% { color: var(--accent); text-shadow: none; transform: scale(1); }
+        }
+
         .days-number {
             font-size: 28px;
             font-weight: bold;
-            color: #87CEEB;
+            color: var(--accent);
             display: block;
             margin-top: 5px;
         }
@@ -82,8 +342,8 @@
             color: rgba(255, 255, 255, 0.9);
             text-shadow: 
                 0 0 10px rgba(255, 255, 255, 0.8),
-                0 0 20px rgba(135, 206, 250, 0.6),
-                0 0 30px rgba(135, 206, 250, 0.4);
+                0 0 20px rgba(var(--accent-rgb),0.6),
+                0 0 30px rgba(var(--accent-rgb),0.4);
             line-height: 1.6;
             font-style: italic;
             animation: textGlow 3s ease-in-out infinite;
@@ -112,8 +372,8 @@
             text-shadow: 
                 0 0 20px rgba(255, 255, 255, 0.9),
                 0 0 40px rgba(255, 255, 255, 0.7),
-                0 0 60px rgba(135, 206, 250, 0.5),
-                0 0 80px rgba(135, 206, 250, 0.3);
+                0 0 60px rgba(var(--accent-rgb),0.5),
+                0 0 80px rgba(var(--accent-rgb),0.3);
             animation: heartGlow 2.5s ease-in-out infinite;
             cursor: pointer;
             user-select: none;
@@ -134,8 +394,8 @@
                 text-shadow: 
                     0 0 20px rgba(255, 255, 255, 0.9),
                     0 0 40px rgba(255, 255, 255, 0.7),
-                    0 0 60px rgba(135, 206, 250, 0.5),
-                    0 0 80px rgba(135, 206, 250, 0.3);
+                    0 0 60px rgba(var(--accent-rgb),0.5),
+                    0 0 80px rgba(var(--accent-rgb),0.3);
                 opacity: 0.95;
                 transform: translate(-50%, -50%) scale(1);
             }
@@ -143,8 +403,8 @@
                 text-shadow: 
                     0 0 30px rgba(255, 255, 255, 1),
                     0 0 50px rgba(255, 255, 255, 0.9),
-                    0 0 70px rgba(135, 206, 250, 0.7),
-                    0 0 100px rgba(135, 206, 250, 0.5);
+                    0 0 70px rgba(var(--accent-rgb),0.7),
+                    0 0 100px rgba(var(--accent-rgb),0.5);
                 opacity: 1;
                 transform: translate(-50%, -50%) scale(1.05);
             }
@@ -154,109 +414,131 @@
             0%, 100% {
                 text-shadow: 
                     0 0 10px rgba(255, 255, 255, 0.8),
-                    0 0 20px rgba(135, 206, 250, 0.6),
-                    0 0 30px rgba(135, 206, 250, 0.4);
+                    0 0 20px rgba(var(--accent-rgb),0.6),
+                    0 0 30px rgba(var(--accent-rgb),0.4);
                 opacity: 0.9;
             }
             50% {
                 text-shadow: 
                     0 0 20px rgba(255, 255, 255, 1),
-                    0 0 30px rgba(135, 206, 250, 0.8),
-                    0 0 40px rgba(135, 206, 250, 0.6);
+                    0 0 30px rgba(var(--accent-rgb),0.8),
+                    0 0 40px rgba(var(--accent-rgb),0.6);
                 opacity: 1;
             }
         }
 
+        /* ── Overlay oscuro detrás del modal ── */
+        .photo-modal-overlay {
+            display: none;
+            position: fixed;
+            inset: 0;
+            background: rgba(0, 0, 0, 0.75);
+            z-index: 99;
+            backdrop-filter: blur(3px);
+        }
+        .photo-modal-overlay.active { display: block; }
+
+        /* ── Polaroid modal ── */
         .photo-modal {
             display: none;
             position: fixed;
             top: 50%;
             left: 50%;
-            transform: translate(-50%, -50%);
-            background: rgba(15, 20, 40, 0.95);
-            border: 2px solid rgba(255, 255, 255, 0.3);
-            border-radius: 20px;
-            padding: 20px;
-            max-width: 90%;
-            width: 400px;
+            transform: translate(-50%, -50%) rotate(-1.5deg);
+            background: #f5f0e8;
+            padding: 14px 14px 0 14px;
+            max-width: 88vw;
+            width: 320px;
             z-index: 100;
-            box-shadow: 0 0 50px rgba(135, 206, 250, 0.4);
+            box-shadow:
+                0 8px 30px rgba(0,0,0,0.6),
+                0 20px 60px rgba(0,0,0,0.4),
+                0 0 0 1px rgba(255,255,255,0.08);
         }
 
         @media (min-width: 768px) {
-            .photo-modal {
-                padding: 30px;
-                max-width: 500px;
-            }
+            .photo-modal { width: 380px; }
         }
 
         .photo-modal.active {
             display: block;
-            animation: modalAppear 0.4s ease-out;
+            animation: polaroidPop 0.45s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
         }
 
-        @keyframes modalAppear {
-            from {
-                opacity: 0;
-                transform: translate(-50%, -50%) scale(0.8);
-            }
-            to {
-                opacity: 1;
-                transform: translate(-50%, -50%) scale(1);
-            }
+        @keyframes polaroidPop {
+            0%   { opacity: 0; transform: translate(-50%, -44%) rotate(-1.5deg) scale(0.7); }
+            70%  { opacity: 1; transform: translate(-50%, -51%) rotate(-1.5deg) scale(1.04); }
+            100% { opacity: 1; transform: translate(-50%, -50%) rotate(-1.5deg) scale(1); }
         }
 
         .photo-container {
             width: 100%;
-            height: 250px;
-            background: #1a1f3a;
-            border-radius: 10px;
-            margin-bottom: 20px;
+            aspect-ratio: 1 / 1;
+            background: #ccc;
+            overflow: hidden;
             display: flex;
             align-items: center;
             justify-content: center;
-            overflow: hidden;
-        }
-
-        @media (min-width: 768px) {
-            .photo-container {
-                height: 300px;
-            }
         }
 
         .photo-container img {
-            max-width: 100%;
-            max-height: 100%;
-            object-fit: contain;
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            display: block;
+        }
+
+        /* Franja inferior de la polaroid */
+        .photo-caption-area {
+            padding: 14px 8px 18px;
+            text-align: center;
+            min-height: 64px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
         }
 
         .photo-text {
-            color: white;
-            font-size: 16px;
-            line-height: 1.6;
-            text-shadow: 0 0 10px rgba(255, 255, 255, 0.5);
+            font-family: 'Georgia', serif;
+            font-style: italic;
+            font-size: 13px;
+            color: #444;
+            line-height: 1.5;
+            letter-spacing: 0.2px;
+        }
+
+        /* Cuando no hay texto, mostrar un corazón decorativo */
+        .photo-text:empty::after {
+            content: '♡';
+            font-size: 20px;
+            color: #c9a0b0;
         }
 
         @media (min-width: 768px) {
-            .photo-text {
-                font-size: 18px;
-            }
+            .photo-text { font-size: 14px; }
         }
 
         .close-btn {
-            position: absolute;
-            top: 10px;
-            right: 15px;
-            font-size: 30px;
-            color: white;
+            position: fixed;
+            top: calc(50% - 50vw * 0.88 / 2 - 38px);
+            right: calc(50% - 160px - 10px);
+            font-size: 26px;
+            color: rgba(255,255,255,0.85);
             cursor: pointer;
-            background: none;
+            background: rgba(0,0,0,0.45);
             border: none;
-            text-shadow: 0 0 10px rgba(255, 255, 255, 0.8);
+            border-radius: 50%;
+            width: 34px;
+            height: 34px;
+            line-height: 32px;
+            text-align: center;
+            z-index: 101;
+            transition: background 0.2s, color 0.2s;
         }
 
         .close-btn:hover {
-            color: #87CEEB;
+            background: rgba(var(--accent-rgb), 0.8);
+            color: #fff;
         }
 
         .instructions {
@@ -273,18 +555,12 @@
             line-height: 1.4;
         }
 
-        @media (min-width: 768px) {
-            .instructions {
-                bottom: 20px;
-                font-size: 13px;
-            }
-        }
     </style>
 </head>
 <body>
     <canvas id="stars"></canvas>
     
-    <div class="days-counter">
+    <div class="days-counter" id="daysCounter" style="cursor:default;">
         Días juntos
         <span class="days-number" id="daysCount">0</span>
     </div>
@@ -296,18 +572,41 @@
         Eres mi universo, y quiero quedarme a tu lado hasta que expire.</p>
     </div>
 
+    <div class="photo-modal-overlay" id="photoModalOverlay" onclick="closeModal()"></div>
     <div class="photo-modal" id="photoModal">
         <button class="close-btn" onclick="closeModal()">&times;</button>
+        <button class="modal-nav prev" id="modalPrev" onclick="navigateModal(-1)">
+            <svg viewBox="0 0 24 24"><polyline points="15 18 9 12 15 6"/></svg>
+        </button>
+        <button class="modal-nav next" id="modalNext" onclick="navigateModal(1)">
+            <svg viewBox="0 0 24 24"><polyline points="9 6 15 12 9 18"/></svg>
+        </button>
         <div class="photo-container" id="photoContainer">
             <img id="photoImage" src="" alt="♥">
         </div>
-        <p class="photo-text" id="photoText"></p>
+        <div class="photo-caption-area">
+            <p class="photo-text" id="photoText"></p>
+        </div>
+        <div class="modal-dots" id="modalDots"></div>
     </div>
 
     <!--div class="instructions">
         Haz clic en el corazón para ver un mensaje especial ♡<br>
         Haz clic en las estrellas brillantes para ver nuestros recuerdos ✨
     </div-->
+
+    <!-- Scroll hint -->
+    <div class="scroll-hint" id="scrollHint">
+        <span>nuestros momentos</span>
+        <div class="arrow"></div>
+    </div>
+
+    <!-- GALERÍA -->
+    <section class="gallery-section" id="gallerySection">
+        <h2 class="gallery-title">Nuestros momentos</h2>
+        <p class="gallery-subtitle">Una foto, una historia ♡</p>
+        <div class="polaroids-grid" id="polaroidsGrid"></div>
+    </section>
 
     <script>
         // ==========================================
@@ -337,6 +636,17 @@
         ];
         // ==========================================
 
+        // ===== TEMA ROSA (activo cada día 6) =====
+        const hoy = new Date();
+        const esRosa = hoy.getDate() === 6
+        if (esRosa) document.body.classList.add('theme-rosa');
+
+        // Colores del canvas según tema
+        const ACCENT_COLOR   = esRosa ? '#f4a7c3' : '#87CEEB';
+        const ACCENT_RGBA    = esRosa ? (a) => `rgba(244,167,195,${a})` : (a) => `rgba(135,206,250,${a})`;
+        const STAR_COLOR     = esRosa ? '#ffe0f0' : 'white';
+        // ==========================================
+
         const canvas = document.getElementById('stars');
         const ctx = canvas.getContext('2d');
         
@@ -350,26 +660,105 @@
             h: []
         };
 
-        // Función para calcular días juntos
-        function calculateDays() {
-             // Fecha de inicio (SIN hora)
-            const startDate = new Date("2025-11-17");
+        // Fechas
+        const mainDate = new Date("2026-02-06");     // Fecha oficial visible
+        const secretDate = new Date("2025-11-17");   // Fecha secreta (3 clics)
 
-            // Fecha de hoy (SIN hora)
+        let usingSecretDate = false;
+
+        function calculateDays(startDate) {
             const today = new Date();
             today.setHours(0, 0, 0, 0);
-
-            // Diferencia en milisegundos
             const diffTime = today.getTime() - startDate.getTime();
-
-            // Convertir a días exactos
-            const diffDays = Math.floor(diffTime / (1000 * 60 * 60 * 24));
-
-            document.getElementById('daysCount').textContent = diffDays;
+            return Math.floor(diffTime / (1000 * 60 * 60 * 24));
         }
 
-        calculateDays();
-        setInterval(calculateDays, 3600000);
+        function updateCounter() {
+            const date = usingSecretDate ? secretDate : mainDate;
+            document.getElementById('daysCount').textContent = calculateDays(date);
+        }
+
+        updateCounter();
+        setInterval(updateCounter, 3600000);
+
+        // Animación de explosión de partículas — cubre toda la pantalla
+        function triggerBurst() {
+            const colors = esRosa
+                ? [ACCENT_COLOR, '#ffffff', '#ffb6d9', '#ffd6f0', '#ff85b3', '#ffadd4']
+                : [ACCENT_COLOR, '#ffffff', '#b0e0ff', '#caf0ff', '#ffe0b2', '#d0f0ff'];
+
+            // 1) Flash de luz sobre toda la pantalla
+            const flash = document.createElement('div');
+            flash.style.cssText = `
+                position:fixed; inset:0; z-index:9999; pointer-events:none;
+                background: radial-gradient(ellipse at center,
+                    rgba(255,255,255,0.92) 0%,
+                    rgba(${esRosa ? '244,167,195' : '135,206,250'},0.55) 45%,
+                    transparent 100%);
+                animation: screenFlash 0.9s ease-out forwards;
+            `;
+            document.body.appendChild(flash);
+            setTimeout(() => flash.remove(), 1000);
+
+            // 2) Partículas desde 7 orígenes repartidos por la pantalla
+            const origins = [
+                { x: window.innerWidth * 0.50, y: window.innerHeight * 0.50 },
+                { x: window.innerWidth * 0.15, y: window.innerHeight * 0.20 },
+                { x: window.innerWidth * 0.85, y: window.innerHeight * 0.20 },
+                { x: window.innerWidth * 0.15, y: window.innerHeight * 0.80 },
+                { x: window.innerWidth * 0.85, y: window.innerHeight * 0.80 },
+                { x: window.innerWidth * 0.50, y: window.innerHeight * 0.10 },
+                { x: window.innerWidth * 0.50, y: window.innerHeight * 0.90 },
+            ];
+
+            origins.forEach(({ x: cx, y: cy }, oi) => {
+                const count = oi === 0 ? 45 : 20;
+                for (let i = 0; i < count; i++) {
+                    const p = document.createElement('div');
+                    p.className = 'burst-particle';
+                    const angle = (i / count) * Math.PI * 2 + Math.random() * 0.4;
+                    const dist  = oi === 0 ? 130 + Math.random() * 220 : 50 + Math.random() * 130;
+                    const size  = 3 + Math.random() * 8;
+                    const dur   = 0.6 + Math.random() * 0.9;
+                    const delay = oi * 0.045;
+                    const color = colors[Math.floor(Math.random() * colors.length)];
+                    p.style.cssText = `
+                        width:${size}px; height:${size}px; background:${color};
+                        left:${cx - size/2}px; top:${cy - size/2}px;
+                        box-shadow: 0 0 ${size*2.5}px ${color}, 0 0 ${size*5}px ${color}55;
+                        --tx:${Math.cos(angle)*dist}px; --ty:${Math.sin(angle)*dist}px; --dur:${dur}s;
+                        animation-delay:${delay}s;
+                    `;
+                    document.body.appendChild(p);
+                    setTimeout(() => p.remove(), (dur + delay) * 1000 + 200);
+                }
+            });
+
+            // 3) Flash en el número
+            const num = document.getElementById('daysCount');
+            num.classList.remove('flash');
+            void num.offsetWidth;
+            num.classList.add('flash');
+            num.addEventListener('animationend', () => num.classList.remove('flash'), { once: true });
+        }
+
+        // Easter egg: 3 clics seguidos en "Días juntos"
+        let clickCount = 0;
+        let clickTimer = null;
+
+        document.getElementById('daysCounter').addEventListener('click', () => {
+            clickCount++;
+            clearTimeout(clickTimer);
+
+            if (clickCount >= 3) {
+                clickCount = 0;
+                usingSecretDate = !usingSecretDate;
+                updateCounter();
+                triggerBurst();
+            } else {
+                clickTimer = setTimeout(() => { clickCount = 0; }, 600);
+            }
+        });
 
         class Star {
             constructor(x, y, radius, isSpecial = false, memoryIndex = -1) {
@@ -389,20 +778,22 @@
                 
                 if (this.isSpecial) {
                     const gradient = ctx.createRadialGradient(this.x, this.y, 0, this.x, this.y, this.radius * 4);
-                    gradient.addColorStop(0, `rgba(135, 206, 250, ${this.opacity})`);
-                    gradient.addColorStop(0.5, `rgba(135, 206, 250, ${this.opacity * 0.3})`);
-                    gradient.addColorStop(1, 'rgba(135, 206, 250, 0)');
+                    gradient.addColorStop(0, ACCENT_RGBA(this.opacity));
+                    gradient.addColorStop(0.5, ACCENT_RGBA(this.opacity * 0.3));
+                    gradient.addColorStop(1, ACCENT_RGBA(0));
                     ctx.fillStyle = gradient;
                     ctx.fillRect(this.x - this.radius * 4, this.y - this.radius * 4, this.radius * 8, this.radius * 8);
                 }
 
                 ctx.beginPath();
                 ctx.arc(this.x, this.y, this.radius, 0, Math.PI * 2);
-                ctx.fillStyle = `rgba(255, 255, 255, ${this.opacity})`;
+                ctx.fillStyle = esRosa
+                    ? `rgba(255, 220, 235, ${this.opacity})`
+                    : `rgba(255, 255, 255, ${this.opacity})`;
                 ctx.fill();
 
                 ctx.shadowBlur = this.isSpecial ? 20 : 10;
-                ctx.shadowColor = this.isSpecial ? '#87CEEB' : 'white';
+                ctx.shadowColor = this.isSpecial ? ACCENT_COLOR : STAR_COLOR;
                 ctx.fill();
 
                 ctx.restore();
@@ -624,30 +1015,182 @@
             }
         });
 
-        function showMemory(index) {
-            const memory = memories[index];
-            document.getElementById('photoImage').src = memory.photo;
-            document.getElementById('photoText').textContent = memory.text;
+        // ==========================================
+        // LIGHTBOX CON NAVEGACIÓN
+        // ==========================================
+        let lightboxItems  = [];  // array unificado { photo, text }
+        let lightboxIndex  = 0;
+        let lightboxSource = null; // 'memories' | 'gallery'
+
+        function buildDots(total, active) {
+            const container = document.getElementById('modalDots');
+            container.innerHTML = '';
+            if (total <= 1) return;
+            for (let i = 0; i < total; i++) {
+                const d = document.createElement('div');
+                d.className = 'modal-dot' + (i === active ? ' active' : '');
+                d.onclick = () => openLightbox(lightboxItems, i);
+                container.appendChild(d);
+            }
+        }
+
+        function openLightbox(items, index) {
+            lightboxItems = items;
+            lightboxIndex = index;
+            const item = items[index];
+            document.getElementById('photoImage').src  = item.photo;
+            document.getElementById('photoText').textContent = item.text || '';
             document.getElementById('photoModal').classList.add('active');
+            document.getElementById('photoModalOverlay').classList.add('active');
+            // Flechas visibles sólo si hay más de 1
+            document.getElementById('modalPrev').style.display = items.length > 1 ? '' : 'none';
+            document.getElementById('modalNext').style.display = items.length > 1 ? '' : 'none';
+            buildDots(items.length, index);
+        }
+
+        function navigateModal(dir) {
+            lightboxIndex = (lightboxIndex + dir + lightboxItems.length) % lightboxItems.length;
+            const item = lightboxItems[lightboxIndex];
+            const img  = document.getElementById('photoImage');
+            img.style.opacity = '0';
+            img.style.transition = 'opacity 0.2s';
+            setTimeout(() => {
+                img.src = item.photo;
+                img.style.opacity = '1';
+            }, 180);
+            document.getElementById('photoText').textContent = item.text || '';
+            buildDots(lightboxItems.length, lightboxIndex);
+        }
+
+        function showMemory(index) {
+            const items = memories.map(m => ({ photo: m.photo, text: m.text }));
+            openLightbox(items, index);
         }
 
         function closeModal() {
             document.getElementById('photoModal').classList.remove('active');
+            document.getElementById('photoModalOverlay').classList.remove('active');
         }
 
         document.addEventListener('keydown', (e) => {
-            if (e.key === 'Escape') {
-                closeModal();
-            }
+            if (e.key === 'Escape')      closeModal();
+            if (e.key === 'ArrowRight')  navigateModal(1);
+            if (e.key === 'ArrowLeft')   navigateModal(-1);
         });
+
+        // ==========================================
+        // SISTEMA DE COMETAS
+        // ==========================================
+        const comets = [];
+
+        class Comet {
+            constructor() {
+                this.reset(true);
+            }
+
+            reset(initial = false) {
+                // Aparecen desde el borde superior o izquierdo
+                const fromTop = Math.random() < 0.5;
+                if (fromTop) {
+                    this.x = Math.random() * canvas.width * 1.2;
+                    this.y = -20;
+                } else {
+                    this.x = -20;
+                    this.y = Math.random() * canvas.height * 0.6;
+                }
+
+                // Ángulo: siempre hacia abajo-derecha, con variación
+                const angle = (Math.PI / 4) + (Math.random() - 0.5) * 0.5;
+                this.speed  = 6 + Math.random() * 7;
+                this.vx     = Math.cos(angle) * this.speed;
+                this.vy     = Math.sin(angle) * this.speed;
+
+                // Cola
+                this.tailLength = 80 + Math.random() * 120;
+                this.width      = 1.2 + Math.random() * 1.4;
+                this.opacity    = initial ? 0 : 0.9 + Math.random() * 0.1;
+                this.fadeIn     = initial ? true : false;
+
+                // Color según tema
+                this.color = esRosa
+                    ? `rgba(255, 200, 230,`
+                    : `rgba(200, 235, 255,`;
+            }
+
+            update() {
+                if (this.fadeIn) {
+                    this.opacity += 0.04;
+                    if (this.opacity >= 0.9) { this.opacity = 0.9; this.fadeIn = false; }
+                }
+                this.x += this.vx;
+                this.y += this.vy;
+            }
+
+            draw() {
+                const tailX = this.x - (this.vx / this.speed) * this.tailLength;
+                const tailY = this.y - (this.vy / this.speed) * this.tailLength;
+
+                const grad = ctx.createLinearGradient(tailX, tailY, this.x, this.y);
+                grad.addColorStop(0,   `${this.color}0)`);
+                grad.addColorStop(0.6, `${this.color}${(this.opacity * 0.4).toFixed(2)})`);
+                grad.addColorStop(1,   `${this.color}${this.opacity.toFixed(2)})`);
+
+                ctx.save();
+                ctx.beginPath();
+                ctx.moveTo(tailX, tailY);
+                ctx.lineTo(this.x, this.y);
+                ctx.strokeStyle = grad;
+                ctx.lineWidth   = this.width;
+                ctx.lineCap     = 'round';
+                ctx.stroke();
+
+                // Destello en la cabeza
+                const glow = ctx.createRadialGradient(this.x, this.y, 0, this.x, this.y, this.width * 4);
+                glow.addColorStop(0, `${this.color}${this.opacity.toFixed(2)})`);
+                glow.addColorStop(1, `${this.color}0)`);
+                ctx.fillStyle = glow;
+                ctx.beginPath();
+                ctx.arc(this.x, this.y, this.width * 4, 0, Math.PI * 2);
+                ctx.fill();
+                ctx.restore();
+            }
+
+            isOffScreen() {
+                return this.x > canvas.width + 50 || this.y > canvas.height + 50;
+            }
+        }
+
+        // Aparición aleatoria: cada 2.5–7 segundos lanza una cometa
+        function scheduleComet() {
+            const delay = 2500 + Math.random() * 4500;
+            setTimeout(() => {
+                comets.push(new Comet());
+                scheduleComet();
+            }, delay);
+        }
+        scheduleComet();
 
         // Animación
         function animate() {
             ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+            // Suavizar parallax (lerp)
+            parallaxX += (mouseX * PARALLAX_STRENGTH - parallaxX) * 0.05;
+            parallaxY += (mouseY * PARALLAX_STRENGTH - parallaxY) * 0.05;
+
+            ctx.save();
+            ctx.translate(parallaxX, parallaxY);
             
+            // Dibujar cometas (debajo de todo)
+            for (let i = comets.length - 1; i >= 0; i--) {
+                comets[i].update();
+                comets[i].draw();
+                if (comets[i].isOffScreen()) comets.splice(i, 1);
+            }
+
             // Dibujar líneas de constelaciones
-            drawConstellationLines(constellations.u, 'rgba(135, 206, 250, 0.5)');
-            drawConstellationLines(constellations.h, 'rgba(135, 206, 250, 0.5)');
+            drawConstellationLines(constellations.u, ACCENT_RGBA(0.5));
+            drawConstellationLines(constellations.h, ACCENT_RGBA(0.5));
             
             // Dibujar estrellas
             stars.forEach(star => {
@@ -655,15 +1198,162 @@
                 star.draw();
             });
 
+            ctx.restore(); // fin parallax
+
             requestAnimationFrame(animate);
         }
+
+        // ==========================================
+        // PARALLAX AL MOVER EL RATÓN
+        // ==========================================
+        let mouseX = 0, mouseY = 0;
+        let parallaxX = 0, parallaxY = 0;
+        const PARALLAX_STRENGTH = 18; // px máx de desplazamiento
+
+        window.addEventListener('mousemove', (e) => {
+            mouseX = (e.clientX / window.innerWidth  - 0.5) * 2; // -1 a 1
+            mouseY = (e.clientY / window.innerHeight - 0.5) * 2;
+        });
+
+        // ==========================================
+        // CORAZONES FLOTANTES
+        // ==========================================
+        const HEART_CHARS = ['♡', '♥', '❤'];
+
+        function spawnHeart() {
+            const el = document.createElement('div');
+            el.className = 'heart-particle';
+            el.textContent = HEART_CHARS[Math.floor(Math.random() * HEART_CHARS.length)];
+
+            const size    = 10 + Math.random() * 14;
+            const opacity = 0.08 + Math.random() * 0.14;
+            const dur     = 7 + Math.random() * 8;
+            const rot     = (Math.random() - 0.5) * 60;
+            const left    = Math.random() * 100;
+            const color   = esRosa
+                ? `rgba(244,167,195,${opacity + 0.05})`
+                : `rgba(135,206,250,${opacity})`;
+
+            el.style.cssText = `
+                left: ${left}vw;
+                bottom: -30px;
+                --size: ${size}px;
+                --fop: ${opacity};
+                --fdur: ${dur}s;
+                --frot: ${rot}deg;
+                color: ${color};
+                font-size: ${size}px;
+                animation-delay: 0s;
+            `;
+
+            document.body.appendChild(el);
+            setTimeout(() => el.remove(), dur * 1000 + 200);
+        }
+
+        // Lanzar uno cada 1.8–3.5 s
+        function scheduleHeart() {
+            const delay = 1800 + Math.random() * 1700;
+            setTimeout(() => { spawnHeart(); scheduleHeart(); }, delay);
+        }
+        scheduleHeart();
 
         animate();
 
         // Responsive
         window.addEventListener('resize', () => {
-            location.reload(); // Recargar para recalcular posiciones
+            location.reload();
         });
+
+        // ==========================================
+        // GALERÍA DE POLAROIDS
+        // ==========================================
+        const galleryPhotos = [
+            { photo: "https://raw.githubusercontent.com/UrielRdzG/Hanni/main/polaroid1.jpg", caption: "" },
+            { photo: "https://raw.githubusercontent.com/UrielRdzG/Hanni/main/polaroid2.jpg", caption: "" },
+            { photo: "https://raw.githubusercontent.com/UrielRdzG/Hanni/main/polaroid3.jpg", caption: "" },
+            { photo: "https://raw.githubusercontent.com/UrielRdzG/Hanni/main/polaroid4.jpg", caption: "" },
+            { photo: "https://raw.githubusercontent.com/UrielRdzG/Hanni/main/polaroid5.jpg", caption: "" },
+            { photo: "https://raw.githubusercontent.com/UrielRdzG/Hanni/main/polaroid6.jpg", caption: "" },
+            { photo: "https://raw.githubusercontent.com/UrielRdzG/Hanni/main/polaroid6_1.jpg", caption: "" },
+            { photo: "https://raw.githubusercontent.com/UrielRdzG/Hanni/main/polaroid.JPG", caption: "" },
+            { photo: "https://raw.githubusercontent.com/UrielRdzG/Hanni/main/polaroid7.JPG", caption: "" },
+            { photo: "https://raw.githubusercontent.com/UrielRdzG/Hanni/main/polaroid8.JPG", caption: "" },
+            { photo: "https://raw.githubusercontent.com/UrielRdzG/Hanni/main/polaroid9.JPG", caption: "" },
+            { photo: "https://raw.githubusercontent.com/UrielRdzG/Hanni/main/polaroid10.JPG", caption: "" },
+            { photo: "https://raw.githubusercontent.com/UrielRdzG/Hanni/main/polaroid11.JPG", caption: "" },
+            { photo: "https://raw.githubusercontent.com/UrielRdzG/Hanni/main/polaroid12.JPG", caption: "" },
+            { photo: "https://raw.githubusercontent.com/UrielRdzG/Hanni/main/polaroid13.JPG", caption: "" },
+            { photo: "https://raw.githubusercontent.com/UrielRdzG/Hanni/main/polaroid14.JPG", caption: "" },
+            { photo: "https://raw.githubusercontent.com/UrielRdzG/Hanni/main/polaroid15.JPG", caption: "" },
+            { photo: "https://raw.githubusercontent.com/UrielRdzG/Hanni/main/polaroid16.JPG", caption: "" },
+            { photo: "https://raw.githubusercontent.com/UrielRdzG/Hanni/main/polaroid17.JPG", caption: "" },
+            { photo: "https://raw.githubusercontent.com/UrielRdzG/Hanni/main/polaroid18.JPG", caption: "" },
+            { photo: "https://raw.githubusercontent.com/UrielRdzG/Hanni/main/polaroid19.JPG", caption: "" },
+            { photo: "https://raw.githubusercontent.com/UrielRdzG/Hanni/main/polaroid20.JPG", caption: "" },
+            { photo: "https://raw.githubusercontent.com/UrielRdzG/Hanni/main/polaroid21.JPG", caption: "" },
+            { photo: "https://raw.githubusercontent.com/UrielRdzG/Hanni/main/polaroid22.jpg", caption: "" },
+            { photo: "https://raw.githubusercontent.com/UrielRdzG/Hanni/main/polaroid23.jpg", caption: "" },
+            { photo: "https://raw.githubusercontent.com/UrielRdzG/Hanni/main/polaroid24.jpg", caption: "" },
+            { photo: "https://raw.githubusercontent.com/UrielRdzG/Hanni/main/polaroid25.jpg", caption: "" },
+            { photo: "https://raw.githubusercontent.com/UrielRdzG/Hanni/main/polaroid26.jpg", caption: "" },
+            { photo: "https://raw.githubusercontent.com/UrielRdzG/Hanni/main/polaroid27.jpg", caption: "" },
+
+            
+        ];
+
+        function buildGallery() {
+            const grid = document.getElementById('polaroidsGrid');
+            const galleryLightbox = galleryPhotos.map(p => ({ photo: p.photo, text: p.caption || '' }));
+
+            galleryPhotos.forEach((item, i) => {
+                const rot   = (Math.random() * 10 - 5).toFixed(1);
+                const delay = (i * 0.08).toFixed(2);
+
+                const card = document.createElement('div');
+                card.className = 'polaroid';
+                card.style.cssText = `--rot:${rot}deg; --delay:${delay}s;`;
+                card.innerHTML = `
+                    <img src="${item.photo}" alt="♥" loading="lazy">
+                    <div class="polaroid-caption">${item.caption}</div>
+                `;
+
+                card.addEventListener('click', () => openLightbox(galleryLightbox, i));
+                grid.appendChild(card);
+            });
+        }
+
+        // Construir galería + fade-in cuando entre en el viewport
+        let galleryBuilt = false;
+        const galleryObserver = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('visible');
+                    if (!galleryBuilt) {
+                        galleryBuilt = true;
+                        buildGallery();
+                    }
+                }
+            });
+        }, { threshold: 0.05 });
+
+        galleryObserver.observe(document.getElementById('gallerySection'));
+
+        // Ocultar scroll hint al bajar
+        window.addEventListener('scroll', () => {
+            const hint = document.getElementById('scrollHint');
+            if (window.scrollY > 60) {
+                hint.classList.add('hidden');
+            } else {
+                hint.classList.remove('hidden');
+            }
+
+            // Ocultar love phrase al salir de la sección principal (hero)
+            const heroHeight = window.innerHeight;
+            if (window.scrollY > heroHeight * 0.4) {
+                lovePhrase.classList.remove('show');
+                phraseVisible = false;
+            }
+        }, { passive: true });
     </script>
 </body>
 </html>
