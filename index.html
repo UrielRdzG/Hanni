@@ -179,6 +179,8 @@
             top: 0;
             left: 0;
             z-index: 1;
+            pointer-events: none;
+            touch-action: none;
         }
 
         .days-counter {
@@ -1259,9 +1261,19 @@
 
         animate();
 
-        // Responsive
+        // Responsive — solo recargar si el ANCHO cambió significativamente
+        // (evita recarga al hacer scroll en móvil, cuando la barra del navegador se oculta)
+        let lastWidth = window.innerWidth;
         window.addEventListener('resize', () => {
-            location.reload();
+            const newWidth = window.innerWidth;
+            if (Math.abs(newWidth - lastWidth) > 50) {
+                lastWidth = newWidth;
+                location.reload();
+            } else {
+                // Solo redimensionar el canvas sin recargar
+                canvas.width = window.innerWidth;
+                canvas.height = window.innerHeight;
+            }
         });
 
         // ==========================================
